@@ -1,10 +1,26 @@
+import { useRef, useState } from 'react';
 import useDraw from '../hooks/useDraw';
+import Toolbar from './Toolbar';
+import { ActionType } from '../types/actionType';
 
 export default function Board({ drawingColor }: { drawingColor: string }) {
-  const { canvasRef, onMouseDown } = useDraw({ drawingColor });
+  const [selectedAction, setSelectedAction] = useState<ActionType>('draw');
+
+  const canvasRef = useRef<HTMLCanvasElement>(null);
+  const { onMouseDownDraw } = useDraw({
+    drawingColor,
+    canvasRef,
+    actionType: selectedAction,
+  });
+
+  const onMouseDown = onMouseDownDraw;
 
   return (
-    <div>
+    <div style={{ display: 'flex', justifyContent: 'center' }}>
+      <Toolbar
+        selectedAction={selectedAction}
+        setSelectedAction={setSelectedAction}
+      />
       <canvas
         ref={canvasRef}
         onMouseDown={onMouseDown}

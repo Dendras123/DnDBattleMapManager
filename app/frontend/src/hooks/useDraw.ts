@@ -1,50 +1,32 @@
 import { useEffect, useRef, useState } from 'react';
+import { ActionType } from '../types/actionType';
+import { Point } from '../types/drawTypes';
+import { drawLine } from '../utils/drawing/drawLine';
 
-interface Point {
-  x: number;
-  y: number;
-}
-
-interface Draw {
-  prevPoint: Point | null;
-  currPoint: Point;
-  ctx: CanvasRenderingContext2D;
+export default function useDraw({
+  drawingColor,
+  canvasRef,
+  actionType,
+}: {
   drawingColor: string;
-}
-
-function drawLine({ prevPoint, currPoint, ctx, drawingColor }: Draw) {
-  const { x: currX, y: currY } = currPoint;
-  const lineWidth = 5;
-
-  const startPoint = prevPoint ?? currPoint;
-  ctx.beginPath();
-  ctx.lineWidth = lineWidth;
-  ctx.strokeStyle = drawingColor;
-  ctx.moveTo(startPoint.x, startPoint.y);
-  ctx.lineTo(currX, currY);
-  ctx.stroke();
-
-  ctx.fillStyle = drawingColor;
-  ctx.beginPath();
-  ctx.arc(startPoint.x, startPoint.y, 2, 0, 2 * Math.PI);
-  ctx.fill();
-}
-
-export default function useDraw({ drawingColor }: { drawingColor: string }) {
+  canvasRef: React.RefObject<HTMLCanvasElement>;
+  actionType: ActionType;
+}) {
   const [isMouseDown, setIsMouseDown] = useState(false);
 
-  const canvasRef = useRef<HTMLCanvasElement>(null);
   const prevPoint = useRef<null | Point>(null);
 
-  const onMouseDown = () => setIsMouseDown(true);
+  const onMouseDownDraw = () => setIsMouseDown(true);
 
   useEffect(() => {
-    const getRelativePosition = (event: MouseEvent) => {
-      const canvas = canvasRef.current;
-      if (!canvas) {
-        return;
-      }
+    const canvas = canvasRef.current;
 
+    if (!canvas || actionType !== 'draw') {
+      setIsMouseDown(false);
+      return;
+    }
+
+    const getRelativePosition = (event: MouseEvent) => {
       const rect = canvas.getBoundingClientRect();
       const x = event.clientX - rect.left;
       const y = event.clientY - rect.top;
@@ -58,7 +40,7 @@ export default function useDraw({ drawingColor }: { drawingColor: string }) {
       }
       const currPoint = getRelativePosition(event);
 
-      const ctx = canvasRef.current?.getContext('2d');
+      const ctx = canvas.getContext('2d');
       if (!ctx || !currPoint) {
         return;
       }
@@ -72,14 +54,14 @@ export default function useDraw({ drawingColor }: { drawingColor: string }) {
       prevPoint.current = null;
     };
 
-    canvasRef.current?.addEventListener('mousemove', handler);
+    canvas.addEventListener('mousemove', handler);
     window.addEventListener('mouseup', mouseUpHandler);
 
     return () => {
-      canvasRef.current?.removeEventListener('mousemove', handler);
+      canvas.removeEventListener('mousemove', handler);
       window.removeEventListener('mouseup', mouseUpHandler);
     };
-  }, [isMouseDown]);
+  }, [isMouseDown, drawingColor, canvasRef, actionType]);
 
-  return { canvasRef, onMouseDown };
+  return { canvasRef, onMouseDownDraw };
 }

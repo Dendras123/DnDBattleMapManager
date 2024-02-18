@@ -3,6 +3,15 @@ export default function ColorPicker({
 }: {
   setDrawingColor: (color: string) => void;
 }) {
+  // anchorOrigin={{
+  //   vertical: 'center',
+  //   horizontal: 'right',
+  // }}
+  // transformOrigin={{
+  //   vertical: 'center',
+  //   horizontal: 'left',
+  // }}
+
   return (
     <div style={{ display: 'flex', justifyContent: 'center' }}>
       <button
