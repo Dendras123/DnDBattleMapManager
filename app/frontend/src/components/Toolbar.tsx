@@ -29,6 +29,7 @@ export default function Toolbar({
     >
       {actionTypes.map((type) => (
         <ToolbarIcon
+          key={type}
           isSelected={selectedAction === type}
           onClick={() => handleSelect(type)}
           CircleIcon={actionTypesAndIcons[type]}
