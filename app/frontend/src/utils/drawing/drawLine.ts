@@ -1,6 +1,12 @@
 import { Draw } from '../../types/drawTypes';
 
-export function drawLine({ prevPoint, currPoint, ctx, drawingColor }: Draw) {
+export function drawLine({
+  prevPoint,
+  currPoint,
+  ctx,
+  drawingColor,
+  radius,
+}: Draw) {
   const { x: currX, y: currY } = currPoint;
   const lineWidth = 5;
 
@@ -14,6 +20,6 @@ export function drawLine({ prevPoint, currPoint, ctx, drawingColor }: Draw) {
 
   ctx.fillStyle = drawingColor;
   ctx.beginPath();
-  ctx.arc(startPoint.x, startPoint.y, 2, 0, 2 * Math.PI);
+  ctx.arc(startPoint.x, startPoint.y, radius, 0, 2 * Math.PI);
   ctx.fill();
 }

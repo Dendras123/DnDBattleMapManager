@@ -8,4 +8,5 @@ export interface Draw {
   currPoint: Point;
   ctx: CanvasRenderingContext2D;
   drawingColor: string;
+  radius: number;
 }

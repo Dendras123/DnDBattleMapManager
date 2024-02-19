@@ -19,9 +19,10 @@ export default function useDraw({
   const onMouseDownDraw = () => setIsMouseDown(true);
 
   useEffect(() => {
+    const acceptedActions: ActionType[] = ['draw', 'erase'];
     const canvas = canvasRef.current;
-
-    if (!canvas || actionType !== 'draw') {
+    // return if canvas is not defined or not draw or erase is selected
+    if (!canvas || !acceptedActions.includes(actionType)) {
       setIsMouseDown(false);
       return;
     }
@@ -45,7 +46,23 @@ export default function useDraw({
         return;
       }
 
-      drawLine({ prevPoint: prevPoint.current, currPoint, ctx, drawingColor });
+      // if globalCompositeOperation is set to destination-out it will erase the canvas, if source-over it will draw
+      let radius = 0;
+      if (actionType === 'draw') {
+        ctx.globalCompositeOperation = 'source-over';
+        radius = 2;
+      } else {
+        ctx.globalCompositeOperation = 'destination-out';
+        radius = 20;
+      }
+
+      drawLine({
+        prevPoint: prevPoint.current,
+        currPoint,
+        ctx,
+        drawingColor,
+        radius,
+      });
       prevPoint.current = currPoint;
     };
 
