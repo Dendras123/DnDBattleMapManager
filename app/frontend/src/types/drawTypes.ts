@@ -10,3 +10,7 @@ export interface Draw {
   drawingColor: string;
   radius: number;
 }
+
+export const DRAW_RADIUS = 2;
+export const ERASE_RADIUS = 10;
+export const ERASER_CURSOR_SIZE = 20;

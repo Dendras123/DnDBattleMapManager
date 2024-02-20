@@ -1,35 +1,62 @@
 import { useRef, useState } from 'react';
-import useDraw from '../hooks/useDraw';
+import useDrawAndErase from '../hooks/useDrawAndErase';
 import Toolbar from './Toolbar';
 import { ActionType } from '../types/actionType';
+import { ERASER_CURSOR_SIZE } from '../types/drawTypes';
 
 export default function Board({ drawingColor }: { drawingColor: string }) {
   const [selectedAction, setSelectedAction] = useState<ActionType>('draw');
 
   const canvasRef = useRef<HTMLCanvasElement>(null);
-  const { onMouseDownDraw } = useDraw({
+  const eraseDivRef = useRef<HTMLDivElement>(null);
+  const { onMouseDown, isMouseDown } = useDrawAndErase({
     drawingColor,
     canvasRef,
+    eraseDivRef,
     actionType: selectedAction,
   });
 
-  const onMouseDown = onMouseDownDraw;
-
   return (
-    <div style={{ display: 'flex', justifyContent: 'center' }}>
+    <div
+      style={{
+        display: 'flex',
+        justifyContent: 'center',
+      }}
+    >
       <Toolbar
         selectedAction={selectedAction}
         setSelectedAction={setSelectedAction}
       />
-      <canvas
-        ref={canvasRef}
-        onMouseDown={onMouseDown}
-        width={750}
-        height={750}
+      <div
         style={{
-          border: '0.2rem solid gray',
+          cursor:
+            selectedAction === 'erase' && isMouseDown ? 'none' : 'default',
         }}
-      />
+      >
+        <canvas
+          ref={canvasRef}
+          onMouseDown={onMouseDown}
+          width={750}
+          height={750}
+          style={{
+            border: '0.2rem solid gray',
+          }}
+        />
+        <div
+          ref={eraseDivRef}
+          style={{
+            height: ERASER_CURSOR_SIZE,
+            width: ERASER_CURSOR_SIZE,
+            position: 'absolute',
+            left: '-10px',
+            top: '-10px',
+            borderRadius: '100%',
+            backgroundColor: 'rgba(243, 240, 240, 0.9)',
+            border: '3px solid gray',
+            visibility: 'hidden',
+          }}
+        />
+      </div>
     </div>
   );
 }

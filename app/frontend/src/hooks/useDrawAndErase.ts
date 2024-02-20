@@ -1,28 +1,31 @@
 import { useEffect, useRef, useState } from 'react';
 import { ActionType } from '../types/actionType';
-import { Point } from '../types/drawTypes';
+import { DRAW_RADIUS, ERASE_RADIUS, Point } from '../types/drawTypes';
 import { drawLine } from '../utils/drawing/drawLine';
 
-export default function useDraw({
+export default function useDrawAndErase({
   drawingColor,
   canvasRef,
+  eraseDivRef,
   actionType,
 }: {
   drawingColor: string;
   canvasRef: React.RefObject<HTMLCanvasElement>;
+  eraseDivRef: React.RefObject<HTMLDivElement>;
   actionType: ActionType;
 }) {
   const [isMouseDown, setIsMouseDown] = useState(false);
 
   const prevPoint = useRef<null | Point>(null);
 
-  const onMouseDownDraw = () => setIsMouseDown(true);
+  const onMouseDown = () => setIsMouseDown(true);
 
   useEffect(() => {
     const acceptedActions: ActionType[] = ['draw', 'erase'];
     const canvas = canvasRef.current;
-    // return if canvas is not defined or not draw or erase is selected
-    if (!canvas || !acceptedActions.includes(actionType)) {
+    const eraseDiv = eraseDivRef.current;
+    // return if canvas, eraseDiv is not defined or not draw or erase is selected
+    if (!canvas || !acceptedActions.includes(actionType) || !eraseDiv) {
       setIsMouseDown(false);
       return;
     }
@@ -50,10 +53,15 @@ export default function useDraw({
       let radius = 0;
       if (actionType === 'draw') {
         ctx.globalCompositeOperation = 'source-over';
-        radius = 2;
+        radius = DRAW_RADIUS;
       } else {
         ctx.globalCompositeOperation = 'destination-out';
-        radius = 20;
+        radius = ERASE_RADIUS;
+        // display the eraser cursor
+        eraseDiv.style.cursor = 'none';
+        eraseDiv.style.visibility = 'visible';
+        eraseDiv.style.transform =
+          'translate(' + event.clientX + 'px,' + event.clientY + 'px)';
       }
 
       drawLine({
@@ -68,6 +76,7 @@ export default function useDraw({
 
     const mouseUpHandler = () => {
       setIsMouseDown(false);
+      eraseDiv.style.visibility = 'hidden';
       prevPoint.current = null;
     };
 
@@ -78,7 +87,7 @@ export default function useDraw({
       canvas.removeEventListener('mousemove', handler);
       window.removeEventListener('mouseup', mouseUpHandler);
     };
-  }, [isMouseDown, drawingColor, canvasRef, actionType]);
+  }, [isMouseDown, drawingColor, canvasRef, eraseDivRef, actionType]);
 
-  return { canvasRef, onMouseDownDraw };
+  return { onMouseDown, isMouseDown };
 }
