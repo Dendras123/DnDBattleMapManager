@@ -1,26 +1,40 @@
 import { useEffect, useRef, useState } from 'react';
 import { ActionType } from '../types/actionType';
-import { DRAW_RADIUS, ERASE_RADIUS, Point } from '../types/drawTypes';
+import { Draw, Point } from '../types/drawTypes';
 import { drawLine } from '../utils/drawing/drawLine';
+import { Socket } from 'socket.io-client';
 
 export default function useDrawAndErase({
   drawingColor,
   canvasRef,
   eraseDivRef,
   actionType,
+  socket,
 }: {
   drawingColor: string;
   canvasRef: React.RefObject<HTMLCanvasElement>;
   eraseDivRef: React.RefObject<HTMLDivElement>;
   actionType: ActionType;
+  socket: Socket;
 }) {
   const [isMouseDown, setIsMouseDown] = useState(false);
-
   const prevPoint = useRef<null | Point>(null);
 
   const onMouseDown = () => setIsMouseDown(true);
 
   useEffect(() => {
+    // draws a line and emits draw event - every other client will get the data
+    const socketDrawLine = ({
+      prevPoint,
+      currPoint,
+      ctx,
+      drawingColor,
+      actionType,
+    }: Draw) => {
+      socket.emit('draw', { prevPoint, currPoint, drawingColor, actionType });
+      drawLine({ prevPoint, currPoint, ctx, drawingColor, actionType });
+    };
+
     const acceptedActions: ActionType[] = ['draw', 'erase'];
     const canvas = canvasRef.current;
     const eraseDiv = eraseDivRef.current;
@@ -49,27 +63,20 @@ export default function useDrawAndErase({
         return;
       }
 
-      // if globalCompositeOperation is set to destination-out it will erase the canvas, if source-over it will draw
-      let radius = 0;
-      if (actionType === 'draw') {
-        ctx.globalCompositeOperation = 'source-over';
-        radius = DRAW_RADIUS;
-      } else {
-        ctx.globalCompositeOperation = 'destination-out';
-        radius = ERASE_RADIUS;
-        // display the eraser cursor
+      // display the eraser cursor
+      if (actionType === 'erase') {
         eraseDiv.style.cursor = 'none';
         eraseDiv.style.visibility = 'visible';
         eraseDiv.style.transform =
           'translate(' + event.clientX + 'px,' + event.clientY + 'px)';
       }
 
-      drawLine({
+      socketDrawLine({
         prevPoint: prevPoint.current,
         currPoint,
         ctx,
         drawingColor,
-        radius,
+        actionType,
       });
       prevPoint.current = currPoint;
     };
@@ -87,7 +94,7 @@ export default function useDrawAndErase({
       canvas.removeEventListener('mousemove', handler);
       window.removeEventListener('mouseup', mouseUpHandler);
     };
-  }, [isMouseDown, drawingColor, canvasRef, eraseDivRef, actionType]);
+  }, [isMouseDown, drawingColor, canvasRef, eraseDivRef, actionType, socket]);
 
   return { onMouseDown, isMouseDown };
 }

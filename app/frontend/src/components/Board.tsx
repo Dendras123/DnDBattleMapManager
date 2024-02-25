@@ -1,8 +1,12 @@
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import useDrawAndErase from '../hooks/useDrawAndErase';
 import Toolbar from './Toolbar';
 import { ActionType } from '../types/actionType';
-import { ERASER_CURSOR_SIZE } from '../types/drawTypes';
+import { DrawEvent, ERASER_CURSOR_SIZE } from '../types/drawTypes';
+import { io } from 'socket.io-client';
+import { drawLine } from '../utils/drawing/drawLine';
+
+const socket = io('http://localhost:3000');
 
 export default function Board() {
   const [drawingColor, setDrawingColor] = useState('');
@@ -15,7 +19,25 @@ export default function Board() {
     canvasRef,
     eraseDivRef,
     actionType: selectedAction,
+    socket,
   });
+  // listen to websocket events
+  useEffect(() => {
+    const ctx = canvasRef?.current?.getContext('2d');
+    // update the canvas after draw event
+    socket.on('draw', (res: DrawEvent) => {
+      if (!ctx) {
+        return;
+      }
+      const { prevPoint, currPoint, drawingColor, actionType } = res.data;
+      drawLine({ prevPoint, currPoint, ctx, drawingColor, actionType });
+    });
+
+    // clean up sockets
+    return () => {
+      socket.off('draw');
+    };
+  }, [canvasRef]);
 
   return (
     <div

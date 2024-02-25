@@ -1,12 +1,22 @@
-import { Draw } from '../../types/drawTypes';
+import { DRAW_RADIUS, Draw, ERASE_RADIUS } from '../../types/drawTypes';
 
 export function drawLine({
   prevPoint,
   currPoint,
   ctx,
   drawingColor,
-  radius,
+  actionType,
 }: Draw) {
+  let radius = 0;
+  // switch between draw and eraser mode
+  if (actionType === 'draw') {
+    ctx.globalCompositeOperation = 'source-over';
+    radius = DRAW_RADIUS;
+  } else {
+    ctx.globalCompositeOperation = 'destination-out';
+    radius = ERASE_RADIUS;
+  }
+
   const { x: currX, y: currY } = currPoint;
   const lineWidth = 5;
 

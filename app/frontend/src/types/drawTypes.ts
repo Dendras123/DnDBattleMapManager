@@ -1,3 +1,5 @@
+import { ActionType } from './actionType';
+
 export interface Point {
   x: number;
   y: number;
@@ -8,7 +10,11 @@ export interface Draw {
   currPoint: Point;
   ctx: CanvasRenderingContext2D;
   drawingColor: string;
-  radius: number;
+  actionType: ActionType;
+}
+
+export interface DrawEvent {
+  data: Omit<Draw, 'ctx'>;
 }
 
 export const DRAW_RADIUS = 2;
