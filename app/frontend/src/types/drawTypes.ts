@@ -14,3 +14,5 @@ export interface Draw {
 export const DRAW_RADIUS = 2;
 export const ERASE_RADIUS = 10;
 export const ERASER_CURSOR_SIZE = 20;
+
+export const colors = ['#000000', '#DC143C', '#32CD32', '#1E90FF', '#FFD700'];

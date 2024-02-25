@@ -4,7 +4,8 @@ import Toolbar from './Toolbar';
 import { ActionType } from '../types/actionType';
 import { ERASER_CURSOR_SIZE } from '../types/drawTypes';
 
-export default function Board({ drawingColor }: { drawingColor: string }) {
+export default function Board() {
+  const [drawingColor, setDrawingColor] = useState('');
   const [selectedAction, setSelectedAction] = useState<ActionType>('draw');
 
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -26,6 +27,7 @@ export default function Board({ drawingColor }: { drawingColor: string }) {
       <Toolbar
         selectedAction={selectedAction}
         setSelectedAction={setSelectedAction}
+        setDrawingColor={setDrawingColor}
       />
       <div
         style={{

@@ -4,15 +4,18 @@ import {
   actionTypesAndIcons,
 } from '../types/actionType';
 import ToolbarIcon from './ToolbarIcon';
+import ToolbarIconColorPicker from './ToolbarIconColorPicker';
 
 interface ToolbarProps {
   selectedAction: ActionType;
   setSelectedAction: React.Dispatch<React.SetStateAction<ActionType>>;
+  setDrawingColor: React.Dispatch<React.SetStateAction<string>>;
 }
 
 export default function Toolbar({
   selectedAction,
   setSelectedAction,
+  setDrawingColor,
 }: ToolbarProps) {
   const handleSelect = (action: ActionType) => {
     setSelectedAction(action);
@@ -27,14 +30,24 @@ export default function Toolbar({
         gap: '20px',
       }}
     >
-      {actionTypes.map((type) => (
-        <ToolbarIcon
-          key={type}
-          isSelected={selectedAction === type}
-          onClick={() => handleSelect(type)}
-          CircleIcon={actionTypesAndIcons[type]}
-        />
-      ))}
+      {actionTypes.map((type) => {
+        return type === 'draw' ? (
+          <ToolbarIconColorPicker
+            key={type}
+            isSelected={selectedAction === type}
+            onClick={() => handleSelect(type)}
+            CircleIcon={actionTypesAndIcons[type]}
+            setDrawingColor={setDrawingColor}
+          />
+        ) : (
+          <ToolbarIcon
+            key={type}
+            isSelected={selectedAction === type}
+            onClick={() => handleSelect(type)}
+            CircleIcon={actionTypesAndIcons[type]}
+          />
+        );
+      })}
     </div>
   );
 }
