@@ -2,21 +2,22 @@ import { useEffect, useRef, useState } from 'react';
 import { ActionType } from '../types/actionType';
 import { Draw, Point } from '../types/drawTypes';
 import { drawLine } from '../utils/drawing/drawLine';
-import { Socket } from 'socket.io-client';
+import { socket } from '../utils/socket/socketInstance';
+import { useParams } from 'react-router-dom';
 
 export default function useDrawAndErase({
   drawingColor,
   canvasRef,
   eraseDivRef,
   actionType,
-  socket,
 }: {
   drawingColor: string;
   canvasRef: React.RefObject<HTMLCanvasElement>;
   eraseDivRef: React.RefObject<HTMLDivElement>;
   actionType: ActionType;
-  socket: Socket;
 }) {
+  const params = useParams();
+  const roomId = params.id;
   const [isMouseDown, setIsMouseDown] = useState(false);
   const prevPoint = useRef<null | Point>(null);
 
@@ -31,7 +32,13 @@ export default function useDrawAndErase({
       drawingColor,
       actionType,
     }: Draw) => {
-      socket.emit('draw', { prevPoint, currPoint, drawingColor, actionType });
+      socket.emit('draw', {
+        prevPoint,
+        currPoint,
+        drawingColor,
+        actionType,
+        roomId,
+      });
       drawLine({ prevPoint, currPoint, ctx, drawingColor, actionType });
     };
 
@@ -94,7 +101,7 @@ export default function useDrawAndErase({
       canvas.removeEventListener('mousemove', handler);
       window.removeEventListener('mouseup', mouseUpHandler);
     };
-  }, [isMouseDown, drawingColor, canvasRef, eraseDivRef, actionType, socket]);
+  }, [isMouseDown, drawingColor, canvasRef, eraseDivRef, actionType, roomId]);
 
   return { onMouseDown, isMouseDown };
 }

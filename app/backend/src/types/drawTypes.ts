@@ -5,9 +5,10 @@ export interface Point {
   y: number;
 }
 
-export interface Draw {
+export interface DrawEvent {
   prevPoint: Point | null;
   currPoint: Point;
   drawingColor: string;
   actionType: ActionType;
+  roomId: string;
 }

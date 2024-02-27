@@ -6,7 +6,7 @@ import {
   WebSocketServer,
 } from '@nestjs/websockets';
 import { Socket, Server } from 'socket.io';
-import { Draw } from 'src/types/drawTypes';
+import { DrawEvent } from 'src/types/drawTypes';
 
 @WebSocketGateway({
   cors: {
@@ -18,7 +18,7 @@ export class DrawEventsGateway {
   server: Server;
 
   @SubscribeMessage('draw')
-  drawLine(@MessageBody() data: Draw, @ConnectedSocket() client: Socket) {
-    client.broadcast.emit('draw', { data });
+  drawLine(@MessageBody() data: DrawEvent, @ConnectedSocket() client: Socket) {
+    client.broadcast.to(data.roomId).emit('draw', { data });
   }
 }

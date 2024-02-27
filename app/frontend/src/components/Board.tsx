@@ -3,12 +3,13 @@ import useDrawAndErase from '../hooks/useDrawAndErase';
 import Toolbar from './Toolbar';
 import { ActionType } from '../types/actionType';
 import { DrawEvent, ERASER_CURSOR_SIZE } from '../types/drawTypes';
-import { io } from 'socket.io-client';
 import { drawLine } from '../utils/drawing/drawLine';
-
-const socket = io('http://localhost:3000');
+import { socket } from '../utils/socket/socketInstance';
+import useJoinRoom from '../hooks/useJoinRoom';
 
 export default function Board() {
+  useJoinRoom();
+
   const [drawingColor, setDrawingColor] = useState('');
   const [selectedAction, setSelectedAction] = useState<ActionType>('draw');
 
@@ -19,7 +20,6 @@ export default function Board() {
     canvasRef,
     eraseDivRef,
     actionType: selectedAction,
-    socket,
   });
   // listen to websocket events
   useEffect(() => {
@@ -35,7 +35,7 @@ export default function Board() {
 
     // clean up sockets
     return () => {
-      socket.off('draw');
+      socket.removeAllListeners('draw');
     };
   }, [canvasRef]);
 
