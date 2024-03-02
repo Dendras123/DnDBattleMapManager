@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 import useDrawAndErase from '../hooks/useDrawAndErase';
 import Toolbar from './Toolbar';
 import { ActionType } from '../types/actionType';
-import { DrawEvent, ERASER_CURSOR_SIZE } from '../types/drawTypes';
+import { DrawEvent, ERASER_CURSOR_SIZE, colors } from '../types/drawTypes';
 import { drawLine } from '../utils/drawing/drawLine';
 import { socket } from '../utils/socket/socketInstance';
 import useJoinRoom from '../hooks/useJoinRoom';
@@ -10,7 +10,7 @@ import useJoinRoom from '../hooks/useJoinRoom';
 export default function Board() {
   useJoinRoom();
 
-  const [drawingColor, setDrawingColor] = useState('');
+  const [drawingColor, setDrawingColor] = useState(colors[0]);
   const [selectedAction, setSelectedAction] = useState<ActionType>('draw');
 
   const canvasRef = useRef<HTMLCanvasElement>(null);
