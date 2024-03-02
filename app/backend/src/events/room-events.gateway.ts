@@ -5,24 +5,25 @@ import {
   WebSocketGateway,
   WebSocketServer,
 } from '@nestjs/websockets';
-import { randomUUID } from 'crypto';
 import { Socket, Server } from 'socket.io';
+import { RoomsService } from 'src/rooms/room.service';
 
 @WebSocketGateway({
   cors: {
     origin: '*',
   },
 })
-export class RoomGateway {
+export class RoomEventsGateway {
   @WebSocketServer()
   server: Server;
 
-  @SubscribeMessage('createRoom')
-  createRoom(@ConnectedSocket() client: Socket) {
-    const roomId = randomUUID();
-    // TODO: SAVE ROOM ID TO DB
+  constructor(private readonly roomsService: RoomsService) {}
 
-    client.emit('roomCreated', roomId);
+  @SubscribeMessage('createRoom')
+  async createRoom(@ConnectedSocket() client: Socket) {
+    const newRoom = await this.roomsService.create();
+
+    client.emit('roomCreated', newRoom.id);
   }
 
   @SubscribeMessage('joinRoom')
