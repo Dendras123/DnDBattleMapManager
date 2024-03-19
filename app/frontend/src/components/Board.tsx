@@ -32,10 +32,19 @@ export default function Board() {
       const { prevPoint, currPoint, drawingColor, actionType } = res.data;
       drawLine({ prevPoint, currPoint, ctx, drawingColor, actionType });
     });
+    // if not a new canvas => load state
+    socket.on('get-canvas-state', (canvasState: string) => {
+      const image = new Image();
+      image.src = canvasState;
+      image.onload = () => {
+        ctx?.drawImage(image, 0, 0);
+      };
+    });
 
     // clean up sockets
     return () => {
       socket.removeAllListeners('draw');
+      socket.removeAllListeners('get-canvas-state');
     };
   }, [canvasRef]);
 

@@ -4,14 +4,7 @@ import { Draw, Point } from '../types/drawTypes';
 import { drawLine } from '../utils/drawing/drawLine';
 import { socket } from '../utils/socket/socketInstance';
 import { useParams } from 'react-router-dom';
-import { useMutation } from 'react-query';
-import axios from 'axios';
-import { dataURLtoFile } from '../utils/dataTransfromation/Base64Helpers';
-
-interface MutationData {
-  dataUrl: string;
-  fileName: string;
-}
+import useSaveState from './useSaveState';
 
 export default function useDrawAndErase({
   drawingColor,
@@ -24,20 +17,7 @@ export default function useDrawAndErase({
   eraseDivRef: React.RefObject<HTMLDivElement>;
   actionType: ActionType;
 }) {
-  // Mutations
-  const mutation = useMutation(({ dataUrl, fileName }: MutationData) => {
-    const config = {
-      headers: {
-        'Content-Type': 'multipart/form-data',
-      },
-    };
-    return axios.post(
-      'http://localhost:3000/api/rooms/save-state',
-      { image: dataURLtoFile(dataUrl, fileName) },
-      config,
-    );
-  });
-
+  const mutation = useSaveState();
   const params = useParams();
   const roomId = params.id;
   const [isMouseDown, setIsMouseDown] = useState(false);
@@ -112,8 +92,10 @@ export default function useDrawAndErase({
 
     const mouseUpHandler = () => {
       setIsMouseDown(false);
+      // hide eraser cursor
       eraseDiv.style.visibility = 'hidden';
       prevPoint.current = null;
+      // save canvas satate to png
       const dataUrl = canvas.toDataURL('image/png');
       mutation.mutate({ dataUrl: dataUrl, fileName: roomId + '.png' });
     };
@@ -125,7 +107,15 @@ export default function useDrawAndErase({
       canvas.removeEventListener('mousemove', handler);
       window.removeEventListener('mouseup', mouseUpHandler);
     };
-  }, [isMouseDown, drawingColor, canvasRef, eraseDivRef, actionType, roomId]);
+  }, [
+    isMouseDown,
+    drawingColor,
+    canvasRef,
+    eraseDivRef,
+    actionType,
+    roomId,
+    mutation,
+  ]);
 
   return { onMouseDown, isMouseDown };
 }
