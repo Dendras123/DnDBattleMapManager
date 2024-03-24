@@ -1,12 +1,16 @@
 import { SvgIconComponent } from '@mui/icons-material';
-import BrushIcon from '@mui/icons-material/Brush';
-import PanoramaHorizontalSelectIcon from '@mui/icons-material/PanoramaHorizontalSelect';
+import {
+  Brush,
+  PanoramaHorizontalSelect,
+  AddPhotoAlternate,
+} from '@mui/icons-material';
 
-export type ActionType = 'draw' | 'erase';
+export type ActionType = 'draw' | 'erase' | 'upload';
 
-export const actionTypes: ActionType[] = ['draw', 'erase'];
+export const actionTypes: ActionType[] = ['draw', 'erase', 'upload'];
 
 export const actionTypesAndIcons: Record<ActionType, SvgIconComponent> = {
-  draw: BrushIcon,
-  erase: PanoramaHorizontalSelectIcon,
+  draw: Brush,
+  erase: PanoramaHorizontalSelect,
+  upload: AddPhotoAlternate,
 };

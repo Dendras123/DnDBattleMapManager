@@ -6,6 +6,7 @@ import { DrawEvent, ERASER_CURSOR_SIZE, colors } from '../types/drawTypes';
 import { drawLine } from '../utils/drawing/drawLine';
 import { socket } from '../utils/socket/socketInstance';
 import useJoinRoom from '../hooks/useJoinRoom';
+import ImageUploadModal from './ImageUploadModal';
 
 export default function Board() {
   useJoinRoom();
@@ -66,6 +67,10 @@ export default function Board() {
             selectedAction === 'erase' && isMouseDown ? 'none' : 'default',
         }}
       >
+        <ImageUploadModal
+          selectedAction={selectedAction}
+          setSelectedAction={setSelectedAction}
+        />
         <canvas
           ref={canvasRef}
           onMouseDown={onMouseDown}
