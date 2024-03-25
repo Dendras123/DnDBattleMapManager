@@ -7,12 +7,14 @@ import { drawLine } from '../utils/drawing/drawLine';
 import { socket } from '../utils/socket/socketInstance';
 import useJoinRoom from '../hooks/useJoinRoom';
 import ImageUploadModal from './ImageUploadModal';
+import ImageSelect from './ImageSelect';
 
 export default function Board() {
   useJoinRoom();
 
   const [drawingColor, setDrawingColor] = useState(colors[0]);
   const [selectedAction, setSelectedAction] = useState<ActionType>('draw');
+  const [images, setImages] = useState<HTMLImageElement[]>([]);
 
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const eraseDivRef = useRef<HTMLDivElement>(null);
@@ -54,6 +56,8 @@ export default function Board() {
       style={{
         display: 'flex',
         justifyContent: 'center',
+        position: 'absolute',
+        pointerEvents: 'auto',
       }}
     >
       <Toolbar
@@ -70,7 +74,15 @@ export default function Board() {
         <ImageUploadModal
           selectedAction={selectedAction}
           setSelectedAction={setSelectedAction}
+          setImages={setImages}
         />
+        {images.map((image, index) => (
+          <ImageSelect
+            key={'image_' + index}
+            image={image}
+            selectedAction={selectedAction}
+          />
+        ))}
         <canvas
           ref={canvasRef}
           onMouseDown={onMouseDown}
@@ -78,6 +90,9 @@ export default function Board() {
           height={750}
           style={{
             border: '0.2rem solid gray',
+            position: 'absolute',
+            // this allows selecting the image which is behind the canvas
+            pointerEvents: selectedAction === 'select' ? 'none' : 'auto',
           }}
         />
         <div

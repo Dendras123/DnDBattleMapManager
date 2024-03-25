@@ -8,19 +8,22 @@ import CloseIcon from '@mui/icons-material/Close';
 interface ImageUploadModalProps {
   selectedAction: ActionType;
   setSelectedAction: React.Dispatch<React.SetStateAction<ActionType>>;
+  setImages: React.Dispatch<React.SetStateAction<HTMLImageElement[]>>;
 }
 
 export default function ImageUploadModal({
   selectedAction,
   setSelectedAction,
+  setImages,
 }: ImageUploadModalProps) {
   const [open, setOpen] = useState(false);
 
   const handleClose = () => {
     setOpen(false);
-    setSelectedAction('draw');
+    setSelectedAction('select');
   };
 
+  // open the dialog if upload is selected from toolbar
   useEffect(() => {
     if (selectedAction === 'upload') {
       setOpen(true);
@@ -41,7 +44,7 @@ export default function ImageUploadModal({
         </IconButton>
       </DialogTitle>
       <DialogContent>
-        <ImageUploader />
+        <ImageUploader setImages={setImages} />
       </DialogContent>
     </Dialog>
   );
