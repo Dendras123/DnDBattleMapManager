@@ -56,7 +56,6 @@ export default function Board() {
       style={{
         display: 'flex',
         justifyContent: 'center',
-        position: 'absolute',
         pointerEvents: 'auto',
       }}
     >

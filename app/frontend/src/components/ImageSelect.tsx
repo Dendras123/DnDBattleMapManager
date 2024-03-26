@@ -32,23 +32,19 @@ export default function ImageSelect({
   const dragStart = (event: ReactMouseEvent) => {
     if (!div || selectedAction !== 'select') return;
 
-    const width =
-      div.getBoundingClientRect().left - div.getBoundingClientRect().right;
+    const rect = div.getBoundingClientRect();
+
+    const width = rect.left - rect.right;
     const originalWidth = width / scaleRef.current;
 
-    const height =
-      div.getBoundingClientRect().top - div.getBoundingClientRect().bottom;
+    const height = rect.top - rect.bottom;
     const originalHeight = height / scaleRef.current;
 
     // (original width - scaled width) / 2
-    const x =
-      event.clientX -
-      div.getBoundingClientRect().left +
-      (width - originalWidth) / 2;
-    const y =
-      event.clientY -
-      div.getBoundingClientRect().top +
-      (height - originalHeight) / 2;
+    console.log((width - originalWidth) / 2);
+
+    const x = event.clientX - rect.left + (width - originalWidth) / 2;
+    const y = event.clientY - rect.top + (height - originalHeight) / 2;
 
     offset = { x, y };
 
