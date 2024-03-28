@@ -3,6 +3,7 @@ import { ActionType } from '../types/actionType';
 import ImageDrag from './ImageDrag';
 import ImageResize from './ImageResize';
 import ImageOutline from './ImageOutline';
+import ImageMenu from './ImageMenu';
 
 interface ImageSelectProps {
   image: HTMLImageElement;
@@ -37,6 +38,7 @@ export default function ImageSelect({
       isResizingRef={isResizingRef}
     >
       <ImageOutline>
+        <ImageMenu />
         <ImageResize
           setIsResizing={setIsResizing}
           setScale={setScale}

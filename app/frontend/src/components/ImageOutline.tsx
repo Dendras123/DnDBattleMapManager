@@ -13,8 +13,15 @@ export default function ImageOutline({ children }: ImageOutlineProps) {
       'resize-div',
     ) as HTMLDivElement;
 
+    const imageMenu = event.currentTarget.children.namedItem(
+      'image-menu',
+    ) as HTMLDivElement;
+
     if (resizeDiv) {
       resizeDiv.style.background = '#669df6';
+    }
+    if (imageMenu) {
+      imageMenu.style.visibility = 'visible';
     }
   };
   // disable highlight
@@ -25,8 +32,15 @@ export default function ImageOutline({ children }: ImageOutlineProps) {
       'resize-div',
     ) as HTMLDivElement;
 
+    const imageMenu = event.currentTarget.children.namedItem(
+      'image-menu',
+    ) as HTMLDivElement;
+
     if (resizeDiv) {
       resizeDiv.style.background = 'transparent';
+    }
+    if (imageMenu) {
+      imageMenu.style.visibility = 'hidden';
     }
   };
 
