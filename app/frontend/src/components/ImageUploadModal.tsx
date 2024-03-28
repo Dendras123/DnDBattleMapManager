@@ -4,16 +4,19 @@ import { useEffect, useState } from 'react';
 import { ActionType } from '../types/actionType';
 import ImageUploader from './ImageUploader';
 import CloseIcon from '@mui/icons-material/Close';
+import { UploadedImage } from '../types/imageTypes';
 
 interface ImageUploadModalProps {
   selectedAction: ActionType;
   setSelectedAction: React.Dispatch<React.SetStateAction<ActionType>>;
-  setImages: React.Dispatch<React.SetStateAction<HTMLImageElement[]>>;
+  images: UploadedImage[];
+  setImages: React.Dispatch<React.SetStateAction<UploadedImage[]>>;
 }
 
 export default function ImageUploadModal({
   selectedAction,
   setSelectedAction,
+  images,
   setImages,
 }: ImageUploadModalProps) {
   const [open, setOpen] = useState(false);
@@ -44,7 +47,7 @@ export default function ImageUploadModal({
         </IconButton>
       </DialogTitle>
       <DialogContent>
-        <ImageUploader setImages={setImages} />
+        <ImageUploader images={images} setImages={setImages} />
       </DialogContent>
     </Dialog>
   );

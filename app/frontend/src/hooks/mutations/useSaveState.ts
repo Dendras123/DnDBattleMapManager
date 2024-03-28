@@ -1,5 +1,5 @@
 import { useMutation } from 'react-query';
-import { dataURLtoFile } from '../utils/dataTransfromation/Base64Helpers';
+import { dataURLtoFile } from '../../utils/dataTransfromation/Base64Helpers';
 import axios from 'axios';
 
 interface SaveStateParams {

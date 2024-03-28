@@ -4,7 +4,7 @@ import { Draw, Point } from '../types/drawTypes';
 import { drawLine } from '../utils/drawing/drawLine';
 import { socket } from '../utils/socket/socketInstance';
 import { useParams } from 'react-router-dom';
-import useSaveState from './useSaveState';
+import useSaveState from './mutations/useSaveState';
 
 export default function useDrawAndErase({
   drawingColor,

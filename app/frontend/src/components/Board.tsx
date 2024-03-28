@@ -8,13 +8,14 @@ import { socket } from '../utils/socket/socketInstance';
 import useJoinRoom from '../hooks/useJoinRoom';
 import ImageUploadModal from './ImageUploadModal';
 import ImageSelect from './ImageSelect';
+import { UploadedImage } from '../types/imageTypes';
 
 export default function Board() {
   useJoinRoom();
 
   const [drawingColor, setDrawingColor] = useState(colors[0]);
   const [selectedAction, setSelectedAction] = useState<ActionType>('draw');
-  const [images, setImages] = useState<HTMLImageElement[]>([]);
+  const [images, setImages] = useState<UploadedImage[]>([]);
 
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const eraseDivRef = useRef<HTMLDivElement>(null);
@@ -73,6 +74,7 @@ export default function Board() {
         <ImageUploadModal
           selectedAction={selectedAction}
           setSelectedAction={setSelectedAction}
+          images={images}
           setImages={setImages}
         />
         {images.map((image, index) => (
@@ -80,6 +82,7 @@ export default function Board() {
             key={'image_' + index}
             image={image}
             selectedAction={selectedAction}
+            setImages={setImages}
           />
         ))}
         <canvas

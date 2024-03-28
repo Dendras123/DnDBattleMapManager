@@ -12,8 +12,21 @@ import {
   North,
 } from '@mui/icons-material';
 import { useState } from 'react';
+import { UploadedImage } from '../types/imageTypes';
+import useDeleteImage from '../hooks/mutations/useDeleteImage';
+import { useParams } from 'react-router-dom';
+import { deleteImage } from '../utils/drawing/manageImage';
 
-export default function ImageMenu() {
+interface ImageMenuProps {
+  image: UploadedImage;
+  setImages: React.Dispatch<React.SetStateAction<UploadedImage[]>>;
+}
+
+export default function ImageMenu({ image, setImages }: ImageMenuProps) {
+  const params = useParams();
+  const roomId = params.id ?? '0';
+  const deleteImageMutation = useDeleteImage();
+
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const open = Boolean(anchorEl);
   const handleClick = (event: React.MouseEvent<HTMLElement>) => {
@@ -70,7 +83,12 @@ export default function ImageMenu() {
           </ListItemIcon>
           <ListItemText>Hide</ListItemText>
         </MenuItem>
-        <MenuItem>
+        <MenuItem
+          onClick={() => {
+            deleteImageMutation.mutate({ roomId: roomId, imageId: image.id });
+            deleteImage(image.element.src, image.id, setImages);
+          }}
+        >
           <ListItemIcon>
             <DeleteForever fontSize="small" />
           </ListItemIcon>

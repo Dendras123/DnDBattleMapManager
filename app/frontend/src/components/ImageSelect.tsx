@@ -4,15 +4,18 @@ import ImageDrag from './ImageDrag';
 import ImageResize from './ImageResize';
 import ImageOutline from './ImageOutline';
 import ImageMenu from './ImageMenu';
+import { UploadedImage } from '../types/imageTypes';
 
 interface ImageSelectProps {
-  image: HTMLImageElement;
+  image: UploadedImage;
   selectedAction: ActionType;
+  setImages: React.Dispatch<React.SetStateAction<UploadedImage[]>>;
 }
 
 export default function ImageSelect({
   image,
   selectedAction,
+  setImages,
 }: ImageSelectProps) {
   // the scale of the div encapsulating the image
   // ref is necessary for accessing not stale state in event listeners
@@ -38,14 +41,18 @@ export default function ImageSelect({
       isResizingRef={isResizingRef}
     >
       <ImageOutline>
-        <ImageMenu />
+        <ImageMenu image={image} setImages={setImages} />
         <ImageResize
           setIsResizing={setIsResizing}
           setScale={setScale}
           scaleRef={scaleRef}
           selectedAction={selectedAction}
         />
-        <img style={{ display: 'block' }} src={image.src} draggable={false} />
+        <img
+          style={{ display: 'block' }}
+          src={image.element.src}
+          draggable={false}
+        />
       </ImageOutline>
     </ImageDrag>
   );
