@@ -1,7 +1,8 @@
 import { FilePondFile } from 'filepond';
 import { UploadedImage } from '../../types/imageTypes';
+import { socket } from '../socket/socketInstance';
 
-const loadImage = (src: string) => {
+export const loadImage = (src: string) => {
   return new Promise<HTMLImageElement>((resolve) => {
     const img = new Image();
     img.addEventListener(
@@ -18,8 +19,15 @@ const loadImage = (src: string) => {
 
 export const createImage = (
   file: FilePondFile,
+  roomId: string,
   setImages: React.Dispatch<React.SetStateAction<UploadedImage[]>>,
 ) => {
+  // send the image to other clients
+  socket.emit('send-image', {
+    roomId: roomId,
+    imageId: file.serverId,
+  });
+  // load the image in the browser
   const src = URL.createObjectURL(file.file);
   loadImage(src).then((img) => {
     const uploadedImage: UploadedImage = {

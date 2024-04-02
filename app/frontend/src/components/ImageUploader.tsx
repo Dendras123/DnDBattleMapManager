@@ -39,7 +39,7 @@ export default function ImageUploader({
           error: FilePondErrorDescription | null,
           file: FilePondFile,
         ) => {
-          createImage(file, setImages);
+          createImage(file, roomId, setImages);
         }}
         maxFileSize={'15MB'}
         acceptedFileTypes={['image/png', 'image/jpeg', 'image/jpg']}

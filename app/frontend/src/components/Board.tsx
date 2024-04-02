@@ -8,7 +8,8 @@ import { socket } from '../utils/socket/socketInstance';
 import useJoinRoom from '../hooks/useJoinRoom';
 import ImageUploadModal from './ImageUploadModal';
 import ImageSelect from './ImageSelect';
-import { UploadedImage } from '../types/imageTypes';
+import { SocketResImage, UploadedImage } from '../types/imageTypes';
+import { loadImage } from '../utils/drawing/manageImage';
 
 export default function Board() {
   useJoinRoom();
@@ -45,10 +46,23 @@ export default function Board() {
       };
     });
 
+    socket.on('get-image', (sentImage: SocketResImage) => {
+      loadImage(sentImage.base64Image).then((img) => {
+        const uploadedImage: UploadedImage = {
+          id: sentImage.id,
+          name: 'valami.png',
+          element: img,
+        };
+
+        setImages((prev) => [...prev, uploadedImage]);
+      });
+    });
+
     // clean up sockets
     return () => {
       socket.removeAllListeners('draw');
       socket.removeAllListeners('get-canvas-state');
+      socket.removeAllListeners('get-image');
     };
   }, [canvasRef]);
 

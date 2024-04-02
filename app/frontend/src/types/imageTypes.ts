@@ -3,3 +3,8 @@ export interface UploadedImage {
   name: string;
   element: HTMLImageElement;
 }
+
+export interface SocketResImage {
+  id: string;
+  base64Image: string;
+}
