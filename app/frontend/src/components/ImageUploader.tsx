@@ -48,7 +48,7 @@ export default function ImageUploader({
         allowMultiple={true}
         maxFiles={10}
         server={{
-          url: `http://localhost:3000/api/rooms/${roomId}/image`,
+          url: `http://localhost:3000/api/images/room/${roomId}`,
           revert: (uniqueFileId, load, error) => {
             const image = images.find((img) => img.id === uniqueFileId);
 

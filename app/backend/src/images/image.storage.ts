@@ -10,6 +10,8 @@ const validMimeTypes: string[] = ['image/png', 'image/jpg', 'image/jpeg'];
 export const saveImageToStorage: MulterOptions = {
   storage: diskStorage({
     destination(req, file, callback) {
+      console.log(file);
+
       const folderName = req.params.id;
       const destinationPath = `./storage/${folderName}`;
       mkdirSync(destinationPath, { recursive: true });

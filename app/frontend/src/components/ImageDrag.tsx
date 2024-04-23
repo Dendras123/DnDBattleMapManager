@@ -68,6 +68,8 @@ export default function ImageDrag({
     document.removeEventListener('mousemove', dragMove);
     document.removeEventListener('mouseup', dragEnd);
 
+    // send coordinates here
+
     div.style.cursor = 'default';
   };
 

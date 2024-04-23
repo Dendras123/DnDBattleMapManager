@@ -1,19 +1,13 @@
 import {
-  BadRequestException,
   Controller,
-  Delete,
-  HttpException,
-  HttpStatus,
-  Param,
   Post,
   UploadedFile,
   UseInterceptors,
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
-import { mkdirSync, unlinkSync } from 'fs';
+import { mkdirSync } from 'fs';
 import { diskStorage } from 'multer';
 import { extname } from 'path';
-import { saveImageToStorage } from './image-storage';
 
 @Controller('rooms')
 export class RoomsController {
@@ -42,39 +36,5 @@ export class RoomsController {
     console.log(image);
 
     return 'Canvas state saved!';
-  }
-
-  @Post(':id/image')
-  @UseInterceptors(FileInterceptor('images', saveImageToStorage))
-  uploadImage(
-    @UploadedFile()
-    image: Express.Multer.File,
-  ) {
-    const fileName = image?.filename;
-    // if the validation (validation inside saveImageToStorage) failed return with 422
-    if (!fileName) {
-      throw new HttpException(
-        'File validation failed!',
-        HttpStatus.UNPROCESSABLE_ENTITY,
-      );
-    }
-
-    const fileNameWithoutExtension = fileName.slice(0, fileName.indexOf('.'));
-
-    return fileNameWithoutExtension;
-  }
-
-  @Delete(':id/image/:name')
-  deleteImage(@Param('id') id: string, @Param('name') name: string) {
-    // TODO: handle file types
-    const path = `./storage/${id}/${name}.png`;
-
-    try {
-      unlinkSync(path);
-      return 'Image deleted successfully!';
-    } catch (error) {
-      console.error(error.message);
-      throw new BadRequestException('Image does not exist!');
-    }
   }
 }
