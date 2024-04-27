@@ -6,12 +6,17 @@ import {
 } from 'react';
 import { ActionType } from '../types/actionType';
 import { Point } from '../types/drawTypes';
+import { socket } from '../utils/socket/socketInstance';
+import { Coordinates, UploadedImage } from '../types/imageTypes';
+import { useParams } from 'react-router-dom';
+import useUpdatePosition from '../hooks/socketListeners/useUpdatePosition';
 
 interface ImageDragProps {
   scaleRef: React.MutableRefObject<number>;
   scale: number;
   selectedAction: ActionType;
   isResizingRef: React.MutableRefObject<boolean>;
+  image: UploadedImage;
   children: ReactNode;
 }
 
@@ -20,18 +25,29 @@ export default function ImageDrag({
   scale,
   selectedAction,
   isResizingRef,
+  image,
   children,
 }: ImageDragProps) {
-  const [position, setPosition] = useState<Point>({ x: 0, y: 0 });
+  const params = useParams();
+  const roomId = params.id ?? '0';
+
+  const [position, _setPosition] = useState<Point>({ x: 0, y: 0 });
+  const positionRef = useRef(position);
+  const setPosition = (position: Point) => {
+    positionRef.current = position;
+    _setPosition(position);
+  };
   let offset = { x: 0, y: 0 };
 
   const divRef = useRef<HTMLDivElement>(null);
-  const div = divRef.current;
+
+  // websocket listener - get-coordinates
+  useUpdatePosition({ image, setPosition });
 
   const dragStart = (event: ReactMouseEvent) => {
-    if (!div || selectedAction !== 'select') return;
+    if (!divRef.current || selectedAction !== 'select') return;
 
-    const rect = div.getBoundingClientRect();
+    const rect = divRef.current.getBoundingClientRect();
 
     const width = rect.left - rect.right;
     const originalWidth = width / scaleRef.current;
@@ -48,12 +64,12 @@ export default function ImageDrag({
     document.addEventListener('mousemove', dragMove, false);
     document.addEventListener('mouseup', dragEnd);
 
-    div.style.cursor = 'grab';
+    divRef.current.style.cursor = 'grab';
   };
 
   const dragMove = (event: MouseEvent) => {
     event.preventDefault();
-    if (!div || isResizingRef.current) return;
+    if (!divRef.current || isResizingRef.current) return;
 
     setPosition({
       x: event.clientX - offset.x,
@@ -63,14 +79,20 @@ export default function ImageDrag({
 
   const dragEnd = (event: MouseEvent) => {
     event.preventDefault();
-    if (!div) return;
+    if (!divRef.current) return;
 
     document.removeEventListener('mousemove', dragMove);
     document.removeEventListener('mouseup', dragEnd);
 
-    // send coordinates here
+    // send image coordinates over websocket
+    const coordinates: Coordinates = {
+      roomId: roomId,
+      imageId: image.id,
+      position: positionRef.current,
+    };
+    socket.emit('send-coordinates', coordinates);
 
-    div.style.cursor = 'default';
+    divRef.current.style.cursor = 'default';
   };
 
   return (

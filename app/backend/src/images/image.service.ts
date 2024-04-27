@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Image } from './image.entity';
-import { CreateImage } from './image.types';
+import { CoordinatesDto, CreateImage } from './image.types';
 
 @Injectable()
 export class ImagesService {
@@ -28,7 +28,27 @@ export class ImagesService {
     image.id = data.id;
     image.name = data.name;
     image.extension = data.extension;
+    image.position = data.position;
 
+    return this.imageRepository.save(image);
+  }
+
+  async saveCoordinates(data: CoordinatesDto): Promise<Image> {
+    const image = await this.findOne(data.imageId);
+
+    if (!image) {
+      throw new Error(`Image with ID ${data.imageId} does not exist.`);
+    }
+
+    image.position = {
+      x: data.position.x,
+      y: data.position.y,
+      z: image.position.z,
+    };
+    return this.imageRepository.save(image);
+  }
+
+  save(image: Image): Promise<Image> {
     return this.imageRepository.save(image);
   }
 }

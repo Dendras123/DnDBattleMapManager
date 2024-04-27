@@ -50,7 +50,7 @@ export default function Board() {
       loadImage(sentImage.base64Image).then((img) => {
         const uploadedImage: UploadedImage = {
           id: sentImage.id,
-          name: 'valami.png',
+          name: sentImage.name,
           element: img,
         };
 

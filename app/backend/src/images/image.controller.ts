@@ -45,6 +45,7 @@ export class ImagesController {
       id: id,
       name: originalName,
       extension: ext,
+      position: { x: 0, y: 0, z: 0 },
     });
 
     return id;

@@ -39,6 +39,7 @@ export default function ImageSelect({
       scale={scale}
       selectedAction={selectedAction}
       isResizingRef={isResizingRef}
+      image={image}
     >
       <ImageOutline>
         <ImageMenu image={image} setImages={setImages} />
