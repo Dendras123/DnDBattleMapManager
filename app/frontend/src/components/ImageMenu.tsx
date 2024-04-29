@@ -16,6 +16,7 @@ import { UploadedImage } from '../types/imageTypes';
 import useDeleteImage from '../hooks/mutations/useDeleteImage';
 import { useParams } from 'react-router-dom';
 import { deleteImage } from '../utils/drawing/manageImage';
+import { socket } from '../utils/socket/socketInstance';
 
 interface ImageMenuProps {
   image: UploadedImage;
@@ -87,6 +88,11 @@ export default function ImageMenu({ image, setImages }: ImageMenuProps) {
           onClick={() => {
             deleteImageMutation.mutate({ roomId: roomId, imageId: image.id });
             deleteImage(image.element.src, image.id, setImages);
+            // delete image from other clients
+            socket.emit('send-delete-image-client', {
+              roomId: roomId,
+              imageId: image.id,
+            });
           }}
         >
           <ListItemIcon>

@@ -9,7 +9,7 @@ import useJoinRoom from '../hooks/useJoinRoom';
 import ImageUploadModal from './ImageUploadModal';
 import ImageSelect from './ImageSelect';
 import { SocketResImage, UploadedImage } from '../types/imageTypes';
-import { loadImage } from '../utils/drawing/manageImage';
+import { deleteImage, loadImage } from '../utils/drawing/manageImage';
 
 export default function Board() {
   useJoinRoom();
@@ -58,13 +58,22 @@ export default function Board() {
       });
     });
 
+    socket.on('get-delete-image-client', (imageId: string) => {
+      const imageToDelete = images.find((image) => image.id === imageId);
+
+      if (imageToDelete) {
+        deleteImage(imageToDelete.element.src, imageToDelete.id, setImages);
+      }
+    });
+
     // clean up sockets
     return () => {
       socket.removeAllListeners('draw');
       socket.removeAllListeners('get-canvas-state');
       socket.removeAllListeners('get-image');
+      socket.removeAllListeners('get-delete-image-client');
     };
-  }, [canvasRef]);
+  }, [canvasRef, images]);
 
   return (
     <div

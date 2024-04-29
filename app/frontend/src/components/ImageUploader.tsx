@@ -9,6 +9,7 @@ import { FilePondErrorDescription, FilePondFile } from 'filepond';
 import { createImage, deleteImage } from '../utils/drawing/manageImage';
 import { UploadedImage } from '../types/imageTypes';
 import useDeleteImage from '../hooks/mutations/useDeleteImage';
+import { socket } from '../utils/socket/socketInstance';
 
 registerPlugin(
   FilePondPluginFileValidateSize,
@@ -68,6 +69,11 @@ export default function ImageUploader({
               },
             );
             deleteImage(image.element.src, image.id, setImages);
+            // delete image from other clients
+            socket.emit('send-delete-image-client', {
+              roomId: roomId,
+              imageId: image.id,
+            });
           },
         }}
         name="images"

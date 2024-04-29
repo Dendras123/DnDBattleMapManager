@@ -6,7 +6,7 @@ export interface Position {
   z: number;
 }
 
-export interface UploadImageDto {
+export interface ImageDto {
   roomId: string;
   imageId: string;
 }

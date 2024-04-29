@@ -8,7 +8,7 @@ import {
 import { readFileSync } from 'fs';
 import { Socket, Server } from 'socket.io';
 import { ImagesService } from 'src/images/image.service';
-import { CoordinatesDto, UploadImageDto } from 'src/images/image.types';
+import { CoordinatesDto, ImageDto } from 'src/images/image.types';
 import { RoomsService } from 'src/rooms/room.service';
 
 @WebSocketGateway({
@@ -27,7 +27,7 @@ export class ImageEventsGateway {
 
   @SubscribeMessage('send-image')
   async sendImage(
-    @MessageBody() data: UploadImageDto,
+    @MessageBody() data: ImageDto,
     @ConnectedSocket() client: Socket,
   ) {
     const image = await this.imagesService.findOne(data.imageId);
@@ -60,5 +60,15 @@ export class ImageEventsGateway {
       imageId: data.imageId,
       position: data.position,
     });
+  }
+
+  @SubscribeMessage('send-delete-image-client')
+  deleteImageFromClient(
+    @MessageBody() data: ImageDto,
+    @ConnectedSocket() client: Socket,
+  ) {
+    client.broadcast
+      .to(data.roomId)
+      .emit('get-delete-image-client', data.imageId);
   }
 }
