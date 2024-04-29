@@ -20,18 +20,18 @@ export class RoomEventsGateway {
 
   constructor(private readonly roomsService: RoomsService) {}
 
-  @SubscribeMessage('createRoom')
+  @SubscribeMessage('create-room')
   async createRoom(@ConnectedSocket() client: Socket) {
     const newRoom = await this.roomsService.create();
 
-    client.emit('roomCreated', newRoom.id);
+    client.emit('room-created', newRoom.id);
   }
 
-  @SubscribeMessage('joinRoom')
+  @SubscribeMessage('join-room')
   joinRoom(@MessageBody() roomId: string, @ConnectedSocket() client: Socket) {
     // join room
     client.join(roomId);
-    client.nsp.to(roomId).emit('roomJoined', client.id);
+    client.nsp.to(roomId).emit('room-joined', client.id);
     // return canvas state
     try {
       const base64String = readFileSync(`./storage/${roomId}/canvasState.png`, {

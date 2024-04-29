@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { socket } from '../utils/socket/socketInstance';
+import { socket } from '../../utils/socket/socketInstance';
 
 /**
  * Joins a room based on the roomId in the url.
@@ -11,7 +11,7 @@ export default function useJoinRoom() {
 
   useEffect(() => {
     if (params?.id) {
-      socket.emit('joinRoom', params.id);
+      socket.emit('join-room', params.id);
     } else {
       naivgate('/');
     }

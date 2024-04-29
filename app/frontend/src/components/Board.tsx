@@ -1,15 +1,14 @@
-import { useEffect, useRef, useState } from 'react';
+import { useRef, useState } from 'react';
 import useDrawAndErase from '../hooks/useDrawAndErase';
 import Toolbar from './Toolbar';
 import { ActionType } from '../types/actionType';
-import { DrawEvent, ERASER_CURSOR_SIZE, colors } from '../types/drawTypes';
-import { drawLine } from '../utils/drawing/drawLine';
-import { socket } from '../utils/socket/socketInstance';
-import useJoinRoom from '../hooks/useJoinRoom';
+import { ERASER_CURSOR_SIZE, colors } from '../types/drawTypes';
+import useJoinRoom from '../hooks/socketListeners/useJoinRoom';
 import ImageUploadModal from './ImageUploadModal';
 import ImageSelect from './ImageSelect';
-import { SocketResImage, UploadedImage } from '../types/imageTypes';
-import { deleteImage, loadImage } from '../utils/drawing/manageImage';
+import { UploadedImage } from '../types/imageTypes';
+import useImages from '../hooks/socketListeners/useImages';
+import useCanvas from '../hooks/socketListeners/useCanvas';
 
 export default function Board() {
   useJoinRoom();
@@ -27,53 +26,8 @@ export default function Board() {
     actionType: selectedAction,
   });
   // listen to websocket events
-  useEffect(() => {
-    const ctx = canvasRef?.current?.getContext('2d');
-    // update the canvas after draw event
-    socket.on('draw', (res: DrawEvent) => {
-      if (!ctx) {
-        return;
-      }
-      const { prevPoint, currPoint, drawingColor, actionType } = res.data;
-      drawLine({ prevPoint, currPoint, ctx, drawingColor, actionType });
-    });
-    // if not a new canvas => load state
-    socket.on('get-canvas-state', (canvasState: string) => {
-      const image = new Image();
-      image.src = canvasState;
-      image.onload = () => {
-        ctx?.drawImage(image, 0, 0);
-      };
-    });
-
-    socket.on('get-image', (sentImage: SocketResImage) => {
-      loadImage(sentImage.base64Image).then((img) => {
-        const uploadedImage: UploadedImage = {
-          id: sentImage.id,
-          name: sentImage.name,
-          element: img,
-        };
-
-        setImages((prev) => [...prev, uploadedImage]);
-      });
-    });
-
-    socket.on('get-delete-image-client', (imageId: string) => {
-      const imageToDelete = images.find((image) => image.id === imageId);
-
-      if (imageToDelete) {
-        deleteImage(imageToDelete.element.src, imageToDelete.id, setImages);
-      }
-    });
-
-    // clean up sockets
-    return () => {
-      socket.removeAllListeners('draw');
-      socket.removeAllListeners('get-canvas-state');
-      socket.removeAllListeners('get-image');
-      socket.removeAllListeners('get-delete-image-client');
-    };
-  }, [canvasRef, images]);
+  useImages({ images, setImages });
+  useCanvas({ canvasRef });
 
   return (
     <div

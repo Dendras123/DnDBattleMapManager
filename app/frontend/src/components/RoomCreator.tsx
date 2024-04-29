@@ -11,17 +11,17 @@ export default function RoomCreator() {
     const navigateToRoom = (roomId: string) => {
       navigate('map/' + roomId);
     };
-    socket.on('roomCreated', navigateToRoom);
+    socket.on('room-created', navigateToRoom);
 
     return () => {
-      socket.off('roomCreated', navigateToRoom);
+      socket.off('room-created', navigateToRoom);
     };
   }, [navigate]);
 
   return (
     <Button
       onClick={() => {
-        socket.emit('createRoom');
+        socket.emit('create-room');
       }}
     >
       Create Map
