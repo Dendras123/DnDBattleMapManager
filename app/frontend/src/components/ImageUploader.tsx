@@ -29,7 +29,7 @@ export default function ImageUploader({
   const params = useParams();
   const roomId = params.id ?? '0';
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const [files, setFiles] = useState<FilePondFile[]>([]);
+  const [_files, setFiles] = useState<FilePondFile[]>([]);
   const deleteImageMutation = useDeleteImage();
 
   return (
@@ -37,7 +37,7 @@ export default function ImageUploader({
       <FilePond
         onupdatefiles={setFiles}
         onprocessfile={(
-          error: FilePondErrorDescription | null,
+          _error: FilePondErrorDescription | null,
           file: FilePondFile,
         ) => {
           createImage(file, roomId, setImages);

@@ -1,0 +1,29 @@
+FROM node:18.17.1-alpine AS base
+RUN apk add --no-cache libc6-compat
+RUN apk update
+RUN npm install -g turbo
+
+FROM base AS builder
+WORKDIR /app
+COPY . .
+# Generate a partial monorepo with a pruned lockfile for a target workspace.
+RUN turbo prune frontend --docker
+
+FROM base AS installer
+WORKDIR /app
+# Copy in package.json and lock file
+COPY --from=builder /app/out/json/ .
+COPY --from=builder /app/out/package-lock.json ./package-lock.json
+RUN npm install
+# Copy in source code and build
+COPY --from=builder /app/out/full/ .
+COPY turbo.json turbo.json
+RUN turbo run build --filter=frontend
+
+FROM nginx:stable-alpine AS runner
+
+COPY --from=installer /app/app/frontend/dist /usr/share/nginx/html
+
+EXPOSE 80
+
+ENTRYPOINT ["nginx", "-g", "daemon off;"]
