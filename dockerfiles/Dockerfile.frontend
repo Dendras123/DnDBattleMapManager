@@ -10,6 +10,10 @@ COPY . .
 RUN turbo prune frontend --docker
 
 FROM base AS builder
+
+ARG VITE_BACKEND_URL
+ENV VITE_BACKEND_URL=$VITE_BACKEND_URL
+
 WORKDIR /app
 # Copy in package.json and lock file
 COPY --from=pruner /app/out/json/ .

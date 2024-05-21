@@ -16,7 +16,7 @@ export default function useSaveState() {
         },
       };
       await axios.post(
-        'http://localhost:3000/api/rooms/save-state',
+        `${import.meta.env.VITE_BACKEND_URL}/api/rooms/save-state`,
         { image: dataURLtoFile(dataUrl, fileName) },
         config,
       );

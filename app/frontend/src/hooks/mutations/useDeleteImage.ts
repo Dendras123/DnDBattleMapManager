@@ -10,7 +10,7 @@ export default function useDeleteImage() {
   return useMutation({
     mutationFn: async ({ roomId, imageId }: DeleteImageParams) => {
       await axios.delete(
-        `http://localhost:3000/api/images/${imageId}/room/${roomId}`,
+        `${import.meta.env.VITE_BACKEND_URL}/api/images/${imageId}/room/${roomId}`,
       );
     },
   });
