@@ -1,4 +1,5 @@
-import { Entity, Column, PrimaryColumn } from 'typeorm';
+import { Room } from 'src/rooms/room.entity';
+import { Entity, Column, PrimaryColumn, ManyToOne } from 'typeorm';
 
 @Entity()
 export class Image {
@@ -19,4 +20,7 @@ export class Image {
 
   @Column({ default: false })
   hidden: boolean;
+
+  @ManyToOne(() => Room, (room) => room.images)
+  room: Room;
 }

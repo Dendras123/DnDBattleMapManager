@@ -29,6 +29,7 @@ export class ImagesService {
     image.name = data.name;
     image.extension = data.extension;
     image.position = data.position;
+    image.room = data.room;
 
     return this.imageRepository.save(image);
   }

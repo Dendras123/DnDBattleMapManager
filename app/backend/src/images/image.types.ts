@@ -1,3 +1,4 @@
+import { Room } from 'src/rooms/room.entity';
 import { Point } from 'src/types/drawTypes';
 
 export interface Position {
@@ -22,4 +23,5 @@ export interface CreateImage {
   name: string;
   extension: string;
   position: Position;
+  room: Room;
 }
