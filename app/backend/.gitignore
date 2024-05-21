@@ -38,4 +38,5 @@ lerna-debug.log*
 *.sqlite
 
 # storage
-/storage
+storage/*
+!storage/.gitkeep
