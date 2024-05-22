@@ -5,7 +5,6 @@ import {
   WebSocketGateway,
   WebSocketServer,
 } from '@nestjs/websockets';
-import { readFileSync } from 'fs';
 import { Socket, Server } from 'socket.io';
 import { ImagesService } from 'src/images/image.service';
 import { CoordinatesDto, ImageDto } from 'src/images/image.types';
@@ -36,11 +35,10 @@ export class ImageEventsGateway {
       throw new Error(`Image with ID ${data.imageId} does not exist.`);
     }
 
-    const path = `./storage/${data.roomId}/${data.imageId}.png`;
-    const base64String = readFileSync(path, {
-      encoding: 'base64',
-    });
-    const base64Image = 'data:image/png;base64,' + base64String;
+    const base64Image = this.imagesService.readImageBase64(
+      data.roomId,
+      data.imageId,
+    );
 
     client.broadcast.to(data.roomId).emit('get-image', {
       id: data.imageId,

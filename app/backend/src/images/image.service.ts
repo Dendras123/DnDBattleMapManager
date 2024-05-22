@@ -3,6 +3,8 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Image } from './image.entity';
 import { CoordinatesDto, CreateImage } from './image.types';
+import { Room } from 'src/rooms/room.entity';
+import { readFileSync } from 'fs';
 
 @Injectable()
 export class ImagesService {
@@ -13,6 +15,12 @@ export class ImagesService {
 
   findAll(): Promise<Image[]> {
     return this.imageRepository.find();
+  }
+
+  async findAllInRoom(room: Room): Promise<Image[]> {
+    return this.imageRepository.find({
+      where: { room: room },
+    });
   }
 
   findOne(id: string): Promise<Image | null> {
@@ -51,5 +59,15 @@ export class ImagesService {
 
   save(image: Image): Promise<Image> {
     return this.imageRepository.save(image);
+  }
+
+  readImageBase64(roomId: string, imageId: string): string {
+    const path = `./storage/${roomId}/${imageId}.png`;
+    const base64String = readFileSync(path, {
+      encoding: 'base64',
+    });
+    const base64Image = 'data:image/png;base64,' + base64String;
+
+    return base64Image;
   }
 }
