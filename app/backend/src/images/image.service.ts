@@ -61,8 +61,8 @@ export class ImagesService {
     return this.imageRepository.save(image);
   }
 
-  readImageBase64(roomId: string, imageId: string): string {
-    const path = `./storage/${roomId}/${imageId}.png`;
+  readImageBase64(roomId: string, imageId: string, extension: string): string {
+    const path = `./storage/${roomId}/${imageId}.${extension}`;
     const base64String = readFileSync(path, {
       encoding: 'base64',
     });

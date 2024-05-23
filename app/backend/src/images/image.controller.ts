@@ -63,15 +63,19 @@ export class ImagesController {
   }
 
   @Delete(':imageId/room/:roomId')
-  deleteImage(
+  async deleteImage(
     @Param('imageId') imageId: string,
     @Param('roomId') roomId: string,
   ) {
-    // TODO: handle file types
-    const path = `./storage/${roomId}/${imageId}.png`;
-
     try {
+      const image = await this.imagesService.findOne(imageId);
+
+      if (!image) {
+        throw new Error(`Image with ID ${imageId} does not exist.`);
+      }
+
       // delete image from storage and database
+      const path = `./storage/${roomId}/${imageId}.${image.extension}`;
       unlinkSync(path);
       this.imagesService.remove(imageId);
 

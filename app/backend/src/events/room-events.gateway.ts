@@ -59,6 +59,7 @@ export class RoomEventsGateway {
         const base64Image = this.imagesService.readImageBase64(
           roomId,
           image.id,
+          image.extension,
         );
 
         client.emit('get-image', {

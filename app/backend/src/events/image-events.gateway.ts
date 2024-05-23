@@ -38,6 +38,7 @@ export class ImageEventsGateway {
     const base64Image = this.imagesService.readImageBase64(
       data.roomId,
       data.imageId,
+      image.extension,
     );
 
     client.broadcast.to(data.roomId).emit('get-image', {
