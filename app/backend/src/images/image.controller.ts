@@ -62,13 +62,19 @@ export class ImagesController {
     return imageId;
   }
 
-  @Delete(':name/room/:id')
-  deleteImage(@Param('id') id: string, @Param('name') name: string) {
+  @Delete(':imageId/room/:roomId')
+  deleteImage(
+    @Param('imageId') imageId: string,
+    @Param('roomId') roomId: string,
+  ) {
     // TODO: handle file types
-    const path = `./storage/${id}/${name}.png`;
+    const path = `./storage/${roomId}/${imageId}.png`;
 
     try {
+      // delete image from storage and database
       unlinkSync(path);
+      this.imagesService.remove(imageId);
+
       return 'Image deleted successfully!';
     } catch (error) {
       console.error(error.message);
