@@ -43,6 +43,7 @@ export class ImageEventsGateway {
     client.broadcast.to(data.roomId).emit('get-image', {
       id: data.imageId,
       name: image.name,
+      defaultPosition: { x: image.position.x, y: image.position.y },
       base64Image: base64Image,
     });
   }

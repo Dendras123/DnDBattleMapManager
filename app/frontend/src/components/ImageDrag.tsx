@@ -31,7 +31,7 @@ export default function ImageDrag({
   const params = useParams();
   const roomId = params.id ?? '0';
 
-  const [position, _setPosition] = useState<Point>({ x: 0, y: 0 });
+  const [position, _setPosition] = useState<Point>(image.defaultPosition);
   const positionRef = useRef(position);
   const setPosition = (position: Point) => {
     positionRef.current = position;

@@ -64,6 +64,7 @@ export class RoomEventsGateway {
         client.emit('get-image', {
           id: image.id,
           name: image.name,
+          defaultPosition: { x: image.position.x, y: image.position.y },
           base64Image: base64Image,
         });
       }

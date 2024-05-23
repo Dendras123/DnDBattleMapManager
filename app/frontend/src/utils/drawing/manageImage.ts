@@ -33,6 +33,7 @@ export const createImage = (
     const uploadedImage: UploadedImage = {
       id: file.serverId,
       name: file.filenameWithoutExtension,
+      defaultPosition: { x: 0, y: 0 },
       element: img,
     };
 

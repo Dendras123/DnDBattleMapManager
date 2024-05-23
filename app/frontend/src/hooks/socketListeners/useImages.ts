@@ -20,6 +20,7 @@ export default function useImages({ images, setImages }: UseImagesParams) {
         const uploadedImage: UploadedImage = {
           id: sentImage.id,
           name: sentImage.name,
+          defaultPosition: sentImage.defaultPosition,
           element: img,
         };
 
