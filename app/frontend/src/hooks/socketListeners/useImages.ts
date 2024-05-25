@@ -21,6 +21,7 @@ export default function useImages({ images, setImages }: UseImagesParams) {
           id: sentImage.id,
           name: sentImage.name,
           defaultPosition: sentImage.defaultPosition,
+          defaultScale: sentImage.defaultScale,
           element: img,
         };
 

@@ -19,7 +19,7 @@ export default function ImageSelect({
 }: ImageSelectProps) {
   // the scale of the div encapsulating the image
   // ref is necessary for accessing not stale state in event listeners
-  const [scale, _setScale] = useState(1);
+  const [scale, _setScale] = useState(image.defaultScale);
   const scaleRef = useRef(scale);
   const setScale = (scale: number) => {
     scaleRef.current = scale;
@@ -48,6 +48,7 @@ export default function ImageSelect({
           setScale={setScale}
           scaleRef={scaleRef}
           selectedAction={selectedAction}
+          image={image}
         />
         <img
           style={{ display: 'block' }}

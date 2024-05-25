@@ -66,6 +66,7 @@ export class RoomEventsGateway {
           id: image.id,
           name: image.name,
           defaultPosition: image.position,
+          defaultScale: image.scale,
           base64Image: base64Image,
         });
       }

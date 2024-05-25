@@ -11,9 +11,7 @@ export interface ImageDto {
   imageId: string;
 }
 
-export interface CoordinatesDto {
-  roomId: string;
-  imageId: string;
+export interface CoordinatesDto extends ImageDto {
   position: Position;
 }
 
@@ -25,8 +23,10 @@ export interface CreateImage {
   room: Room;
 }
 
-export interface UpdateZIndexDto {
-  roomId: string;
-  imageId: string;
+export interface UpdateZIndexDto extends ImageDto {
   zIndexChange: number;
+}
+
+export interface UpdateScaleDto extends ImageDto {
+  scale: number;
 }

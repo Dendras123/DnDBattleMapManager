@@ -6,7 +6,7 @@ import {
   UploadedImage,
 } from '../../types/imageTypes';
 
-interface UseJoinRoomParams {
+interface UseUpdatePositionParams {
   image: UploadedImage;
   setPosition: (position: Position) => void;
 }
@@ -14,7 +14,7 @@ interface UseJoinRoomParams {
 export default function useUpdatePosition({
   image,
   setPosition,
-}: UseJoinRoomParams) {
+}: UseUpdatePositionParams) {
   useEffect(() => {
     const updatePosition = (data: SocketResCoordinates) => {
       if (data.imageId !== image.id) {

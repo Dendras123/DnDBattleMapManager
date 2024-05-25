@@ -10,6 +10,7 @@ import { ImagesService } from 'src/images/image.service';
 import {
   CoordinatesDto,
   ImageDto,
+  UpdateScaleDto,
   UpdateZIndexDto,
 } from 'src/images/image.types';
 import { RoomsService } from 'src/rooms/room.service';
@@ -49,6 +50,7 @@ export class ImageEventsGateway {
       id: data.imageId,
       name: image.name,
       defaultPosition: image.position,
+      defaultScale: image.scale,
       base64Image: base64Image,
     });
   }
@@ -77,7 +79,7 @@ export class ImageEventsGateway {
   }
 
   @SubscribeMessage('send-update-z-index')
-  async sendBringForward(
+  async sendUpdateZIndex(
     @MessageBody() data: UpdateZIndexDto,
     @ConnectedSocket() client: Socket,
   ) {
@@ -101,5 +103,25 @@ export class ImageEventsGateway {
 
     client.broadcast.to(data.roomId).emit('get-coordinates', coordinates);
     client.emit('get-coordinates', coordinates);
+  }
+
+  @SubscribeMessage('send-update-scale')
+  async sendBringForward(
+    @MessageBody() data: UpdateScaleDto,
+    @ConnectedSocket() client: Socket,
+  ) {
+    const image = await this.imagesService.findOne(data.imageId);
+
+    if (!image) {
+      throw new Error(`Image with ID ${data.imageId} does not exist.`);
+    }
+
+    image.scale = data.scale;
+    this.imagesService.save(image);
+
+    client.broadcast.to(data.roomId).emit('get-update-scale', {
+      imageId: data.imageId,
+      scale: image.scale,
+    });
   }
 }
