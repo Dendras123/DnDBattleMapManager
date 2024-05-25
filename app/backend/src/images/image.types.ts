@@ -1,5 +1,4 @@
 import { Room } from 'src/rooms/room.entity';
-import { Point } from 'src/types/drawTypes';
 
 export interface Position {
   x: number;
@@ -15,7 +14,7 @@ export interface ImageDto {
 export interface CoordinatesDto {
   roomId: string;
   imageId: string;
-  position: Point;
+  position: Position;
 }
 
 export interface CreateImage {
@@ -24,4 +23,10 @@ export interface CreateImage {
   extension: string;
   position: Position;
   room: Room;
+}
+
+export interface UpdateZIndexDto {
+  roomId: string;
+  imageId: string;
+  zIndexChange: number;
 }

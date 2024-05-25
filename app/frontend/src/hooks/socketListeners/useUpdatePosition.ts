@@ -1,11 +1,14 @@
 import { useEffect } from 'react';
 import { socket } from '../../utils/socket/socketInstance';
-import { SocketResCoordinates, UploadedImage } from '../../types/imageTypes';
-import { Point } from '../../types/drawTypes';
+import {
+  Position,
+  SocketResCoordinates,
+  UploadedImage,
+} from '../../types/imageTypes';
 
 interface UseJoinRoomParams {
   image: UploadedImage;
-  setPosition: (position: Point) => void;
+  setPosition: (position: Position) => void;
 }
 
 export default function useUpdatePosition({

@@ -54,6 +54,7 @@ export class ImagesService {
       y: data.position.y,
       z: image.position.z,
     };
+
     return this.imageRepository.save(image);
   }
 

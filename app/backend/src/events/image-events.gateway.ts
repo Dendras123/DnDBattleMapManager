@@ -7,7 +7,11 @@ import {
 } from '@nestjs/websockets';
 import { Socket, Server } from 'socket.io';
 import { ImagesService } from 'src/images/image.service';
-import { CoordinatesDto, ImageDto } from 'src/images/image.types';
+import {
+  CoordinatesDto,
+  ImageDto,
+  UpdateZIndexDto,
+} from 'src/images/image.types';
 import { RoomsService } from 'src/rooms/room.service';
 
 @WebSocketGateway({
@@ -44,7 +48,7 @@ export class ImageEventsGateway {
     client.broadcast.to(data.roomId).emit('get-image', {
       id: data.imageId,
       name: image.name,
-      defaultPosition: { x: image.position.x, y: image.position.y },
+      defaultPosition: image.position,
       base64Image: base64Image,
     });
   }
@@ -54,11 +58,11 @@ export class ImageEventsGateway {
     @MessageBody() data: CoordinatesDto,
     @ConnectedSocket() client: Socket,
   ) {
-    this.imagesService.saveCoordinates(data);
+    const image = await this.imagesService.saveCoordinates(data);
 
     client.broadcast.to(data.roomId).emit('get-coordinates', {
       imageId: data.imageId,
-      position: data.position,
+      position: image.position,
     });
   }
 
@@ -70,5 +74,32 @@ export class ImageEventsGateway {
     client.broadcast
       .to(data.roomId)
       .emit('get-delete-image-client', data.imageId);
+  }
+
+  @SubscribeMessage('send-update-z-index')
+  async sendBringForward(
+    @MessageBody() data: UpdateZIndexDto,
+    @ConnectedSocket() client: Socket,
+  ) {
+    const image = await this.imagesService.findOne(data.imageId);
+
+    if (!image) {
+      throw new Error(`Image with ID ${data.imageId} does not exist.`);
+    }
+
+    if (image.position.z === 0 && data.zIndexChange === -1) {
+      return;
+    }
+
+    image.position.z += data.zIndexChange;
+    this.imagesService.save(image);
+
+    const coordinates = {
+      imageId: data.imageId,
+      position: image.position,
+    };
+
+    client.broadcast.to(data.roomId).emit('get-coordinates', coordinates);
+    client.emit('get-coordinates', coordinates);
   }
 }

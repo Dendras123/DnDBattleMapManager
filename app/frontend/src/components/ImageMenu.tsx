@@ -66,13 +66,29 @@ export default function ImageMenu({ image, setImages }: ImageMenuProps) {
         }}
         slotProps={{ paper: { sx: { width: '200px' } } }}
       >
-        <MenuItem>
+        <MenuItem
+          onClick={() => {
+            socket.emit('send-update-z-index', {
+              roomId: roomId,
+              imageId: image.id,
+              zIndexChange: 1,
+            });
+          }}
+        >
           <ListItemIcon>
             <North fontSize="small" />
           </ListItemIcon>
           <ListItemText>Bring forward</ListItemText>
         </MenuItem>
-        <MenuItem>
+        <MenuItem
+          onClick={() => {
+            socket.emit('send-update-z-index', {
+              roomId: roomId,
+              imageId: image.id,
+              zIndexChange: -1,
+            });
+          }}
+        >
           <ListItemIcon>
             <North fontSize="small" style={{ transform: 'rotate(180deg)' }} />
           </ListItemIcon>

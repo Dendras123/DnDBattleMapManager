@@ -5,9 +5,8 @@ import {
   useState,
 } from 'react';
 import { ActionType } from '../types/actionType';
-import { Point } from '../types/drawTypes';
 import { socket } from '../utils/socket/socketInstance';
-import { Coordinates, UploadedImage } from '../types/imageTypes';
+import { Coordinates, Position, UploadedImage } from '../types/imageTypes';
 import { useParams } from 'react-router-dom';
 import useUpdatePosition from '../hooks/socketListeners/useUpdatePosition';
 
@@ -31,9 +30,9 @@ export default function ImageDrag({
   const params = useParams();
   const roomId = params.id ?? '0';
 
-  const [position, _setPosition] = useState<Point>(image.defaultPosition);
+  const [position, _setPosition] = useState<Position>(image.defaultPosition);
   const positionRef = useRef(position);
-  const setPosition = (position: Point) => {
+  const setPosition = (position: Position) => {
     positionRef.current = position;
     _setPosition(position);
   };
@@ -74,6 +73,7 @@ export default function ImageDrag({
     setPosition({
       x: event.clientX - offset.x,
       y: event.clientY - offset.y,
+      z: position.z,
     });
   };
 
@@ -104,6 +104,7 @@ export default function ImageDrag({
         position: 'absolute',
         userSelect: 'none',
         transform: `translateX(${position.x}px) translateY(${position.y}px) scale(${scale})`,
+        zIndex: position.z,
       }}
       onMouseDown={dragStart}
     >
