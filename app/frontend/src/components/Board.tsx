@@ -54,9 +54,9 @@ export default function Board() {
           images={images}
           setImages={setImages}
         />
-        {images.map((image, index) => (
+        {images.map((image) => (
           <ImageSelect
-            key={'image_' + index}
+            key={image.id}
             image={image}
             selectedAction={selectedAction}
             setImages={setImages}
