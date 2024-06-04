@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Room } from './room.entity';
+import { CreateRoomDto } from './room.types';
 
 @Injectable()
 export class RoomsService {
@@ -22,8 +23,18 @@ export class RoomsService {
     await this.roomRepository.delete(id);
   }
 
-  async create(): Promise<Room> {
+  async create(data: CreateRoomDto): Promise<Room> {
     const room = this.roomRepository.create();
+
+    const size = data.size.split('x');
+    room.width = parseInt(size[0]);
+    room.height = parseInt(size[1]);
+
+    const name = data.name.trim();
+    if (name !== '') {
+      room.name = name;
+    }
+
     return this.roomRepository.save(room);
   }
 }

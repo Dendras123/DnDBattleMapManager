@@ -9,9 +9,17 @@ import ImageSelect from './ImageSelect';
 import { UploadedImage } from '../types/imageTypes';
 import useImages from '../hooks/socketListeners/useImages';
 import useCanvas from '../hooks/socketListeners/useCanvas';
+import useGetRoom from '../hooks/socketListeners/useGetRoom';
+import { SocketResRoom } from '../types/roomType';
 
 export default function Board() {
   useJoinRoom();
+
+  const [roomData, setRoomData] = useState<SocketResRoom>({
+    width: 1600,
+    height: 900,
+    name: '',
+  });
 
   const [drawingColor, setDrawingColor] = useState(colors[0]);
   const [selectedAction, setSelectedAction] = useState<ActionType>('draw');
@@ -26,6 +34,7 @@ export default function Board() {
     actionType: selectedAction,
   });
   // listen to websocket events
+  useGetRoom({ setRoomData });
   useImages({ images, setImages });
   useCanvas({ canvasRef });
 
@@ -41,6 +50,7 @@ export default function Board() {
         selectedAction={selectedAction}
         setSelectedAction={setSelectedAction}
         setDrawingColor={setDrawingColor}
+        height={roomData.height}
       />
       <div
         style={{
@@ -65,8 +75,8 @@ export default function Board() {
         <canvas
           ref={canvasRef}
           onMouseDown={onMouseDown}
-          width={750}
-          height={750}
+          width={roomData.width}
+          height={roomData.height}
           style={{
             border: '0.1rem solid gray',
             position: 'absolute',

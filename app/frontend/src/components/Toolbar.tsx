@@ -10,12 +10,14 @@ interface ToolbarProps {
   selectedAction: ActionType;
   setSelectedAction: React.Dispatch<React.SetStateAction<ActionType>>;
   setDrawingColor: React.Dispatch<React.SetStateAction<string>>;
+  height: number;
 }
 
 export default function Toolbar({
   selectedAction,
   setSelectedAction,
   setDrawingColor,
+  height,
 }: ToolbarProps) {
   const handleSelect = (action: ActionType) => {
     setSelectedAction(action);
@@ -29,7 +31,8 @@ export default function Toolbar({
         justifyContent: 'center',
         gap: '20px',
         marginLeft: '10px',
-        height: '750px',
+        height: height,
+        zIndex: 1,
       }}
     >
       {actionTypes.map((type) => {

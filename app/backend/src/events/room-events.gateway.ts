@@ -9,6 +9,7 @@ import { readFileSync } from 'fs';
 import { Socket, Server } from 'socket.io';
 import { ImagesService } from 'src/images/image.service';
 import { RoomsService } from 'src/rooms/room.service';
+import { CreateRoomDto } from 'src/rooms/room.types';
 
 @WebSocketGateway({
   cors: {
@@ -25,8 +26,11 @@ export class RoomEventsGateway {
   ) {}
 
   @SubscribeMessage('create-room')
-  async createRoom(@ConnectedSocket() client: Socket) {
-    const newRoom = await this.roomsService.create();
+  async createRoom(
+    @MessageBody() data: CreateRoomDto,
+    @ConnectedSocket() client: Socket,
+  ) {
+    const newRoom = await this.roomsService.create(data);
 
     client.emit('room-created', newRoom.id);
   }
@@ -44,6 +48,14 @@ export class RoomEventsGateway {
     client.join(roomId);
     client.nsp.to(roomId).emit('room-joined', client.id);
     try {
+      const room = await this.roomsService.findOne(roomId);
+      // get room board size and name
+      client.emit('get-room-data', {
+        width: room.width,
+        height: room.height,
+        name: room.name,
+      });
+
       // get canvas state
       const base64String = readFileSync(`./storage/${roomId}/canvasState.png`, {
         encoding: 'base64',
@@ -52,7 +64,6 @@ export class RoomEventsGateway {
 
       client.emit('get-canvas-state', canvasState);
       // get images
-      const room = await this.roomsService.findOne(roomId);
       const images = await this.imagesService.findAllInRoom(room);
 
       for (const image of images) {

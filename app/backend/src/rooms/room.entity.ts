@@ -16,6 +16,12 @@ export class Room {
   @Column({ default: 'Unnamed Map' })
   name: string;
 
+  @Column({ default: 1600 })
+  width: number;
+
+  @Column({ default: 900 })
+  height: number;
+
   @OneToMany(() => Image, (image) => image.room)
   images: Image[];
 
