@@ -26,8 +26,10 @@ export default function Toolbar({
       style={{
         display: 'flex',
         flexDirection: 'column',
-        justifyContent: 'flex-start',
+        justifyContent: 'center',
         gap: '20px',
+        marginLeft: '10px',
+        height: '750px',
       }}
     >
       {actionTypes.map((type) => {

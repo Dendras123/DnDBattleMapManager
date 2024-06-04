@@ -33,7 +33,7 @@ export default function Board() {
     <div
       style={{
         display: 'flex',
-        justifyContent: 'center',
+        justifyContent: 'flex-start',
         pointerEvents: 'auto',
       }}
     >
@@ -68,8 +68,12 @@ export default function Board() {
           width={750}
           height={750}
           style={{
-            border: '0.2rem solid gray',
+            border: '0.1rem solid gray',
             position: 'absolute',
+            left: 0,
+            right: 0,
+            marginLeft: 'auto',
+            marginRight: 'auto',
             // this allows selecting the image which is behind the canvas
             pointerEvents: selectedAction === 'select' ? 'none' : 'auto',
           }}
