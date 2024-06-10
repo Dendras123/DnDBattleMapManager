@@ -4,6 +4,7 @@ import {
   actionTypesAndIcons,
 } from '../types/actionType';
 import ToolbarIcon from './ToolbarIcon';
+import ToolbarIconDiceRoller from './ToolbarIconDiceRoller';
 import ToolbarIconColorPicker from './ToolbarIconColorPicker';
 
 interface ToolbarProps {
@@ -36,22 +37,36 @@ export default function Toolbar({
       }}
     >
       {actionTypes.map((type) => {
-        return type === 'draw' ? (
-          <ToolbarIconColorPicker
-            key={type}
-            isSelected={selectedAction === type}
-            onClick={() => handleSelect(type)}
-            CircleIcon={actionTypesAndIcons[type]}
-            setDrawingColor={setDrawingColor}
-          />
-        ) : (
-          <ToolbarIcon
-            key={type}
-            isSelected={selectedAction === type}
-            onClick={() => handleSelect(type)}
-            CircleIcon={actionTypesAndIcons[type]}
-          />
-        );
+        switch (type) {
+          case 'draw':
+            return (
+              <ToolbarIconColorPicker
+                key={type}
+                isSelected={selectedAction === type}
+                onClick={() => handleSelect(type)}
+                CircleIcon={actionTypesAndIcons[type]}
+                setDrawingColor={setDrawingColor}
+              />
+            );
+          case 'rollDice':
+            return (
+              <ToolbarIconDiceRoller
+                key={type}
+                isSelected={selectedAction === type}
+                onClick={() => handleSelect(type)}
+                CircleIcon={actionTypesAndIcons[type]}
+              />
+            );
+          default:
+            return (
+              <ToolbarIcon
+                key={type}
+                isSelected={selectedAction === type}
+                onClick={() => handleSelect(type)}
+                CircleIcon={actionTypesAndIcons[type]}
+              />
+            );
+        }
       })}
     </div>
   );

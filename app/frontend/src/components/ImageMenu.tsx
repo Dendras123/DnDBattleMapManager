@@ -5,12 +5,7 @@ import {
   Menu,
   MenuItem,
 } from '@mui/material';
-import {
-  DeleteForever,
-  MoreVert,
-  VisibilityOff,
-  North,
-} from '@mui/icons-material';
+import { DeleteForever, MoreVert, North } from '@mui/icons-material';
 import { useState } from 'react';
 import { UploadedImage } from '../types/imageTypes';
 import useDeleteImage from '../hooks/mutations/useDeleteImage';
@@ -94,12 +89,12 @@ export default function ImageMenu({ image, setImages }: ImageMenuProps) {
           </ListItemIcon>
           <ListItemText>Bring backward</ListItemText>
         </MenuItem>
-        <MenuItem>
+        {/* <MenuItem>
           <ListItemIcon>
             <VisibilityOff fontSize="small" />
           </ListItemIcon>
           <ListItemText>Hide</ListItemText>
-        </MenuItem>
+        </MenuItem> */}
         <MenuItem
           onClick={() => {
             deleteImageMutation.mutate({ roomId: roomId, imageId: image.id });

@@ -10,6 +10,7 @@ export default function useGetRoom({ setRoomData }: UseGetRoomProps) {
   useEffect(() => {
     socket.on('get-room-data', (roomData: SocketResRoom) => {
       setRoomData(roomData);
+      document.title = `${roomData.name} - Battle Map Manager`;
     });
 
     // clean up listeners
